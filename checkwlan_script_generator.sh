@@ -6,8 +6,8 @@
 
 current_gateway_ip="awk '\$1 == \"0.0.0.0\" { print \$2 }'"
 wlan_interface="wlan0"
-max_ping_attempts=1
-ping_timeout=1
+max_ping_attempts=4
+ping_timeout=2
 
 max_wlan_restart_attempts=5
 
@@ -49,5 +49,8 @@ echo 0 > $wlan_restart_counter_file
 # Create initial log file
 touch $log_file
 
-# ADD THE SCRIPT TO THE CRONTAB (have to run as sudo to be able to reboot the pi)
+# Remove script from crontab (if it is already there)
+(crontab -l 2>/dev/null | grep -v "/home/pi/$script_file") | crontab -
+
+# Add script to crontab (have to run as sudo to be able to reboot the pi)
 (crontab -l 2>/dev/null; echo "* * * * * /usr/bin/sudo -H /home/pi/$script_file >> /dev/null 2>&1") | crontab -
